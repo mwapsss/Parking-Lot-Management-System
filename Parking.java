@@ -2,6 +2,8 @@ import java.io.*;
 import java.util.*;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
+import java.util.Locale;
 
 public class Parking {
 
@@ -9,8 +11,9 @@ public class Parking {
     static List<ParkingRecord> records = new ArrayList<>();
     static Scanner input = new Scanner(System.in);
     static boolean running = true;
+
     static DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("MM/dd/yyyy");
-    static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a");
+    static DateTimeFormatter timeFormat = DateTimeFormatter.ofPattern("hh:mm a", Locale.ENGLISH);
 
     public static void main(String[] args) {
         while (running) {
@@ -37,7 +40,7 @@ public class Parking {
                     generateReport();
                     break;
                 case "e":
-                    System.out.println("Thank you!");
+                    System.out.println("Thank you for using the system!");
                     running = false;
                     break;
                 default:
@@ -94,8 +97,8 @@ public class Parking {
                 return;
             }
 
-            DateTimeFormatter tFormat = DateTimeFormatter.ofPattern("h:mm a");
-            LocalTime timeIn = LocalTime.parse(timeInStr.toUpperCase(), tFormat);
+            DateTimeFormatter tFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+            LocalTime timeIn = LocalTime.parse(timeInStr, tFormat);
             LocalDateTime dateTimeIn = LocalDateTime.of(LocalDate.now(), timeIn);
 
             ParkingRecord record = new ParkingRecord();
@@ -106,8 +109,10 @@ public class Parking {
             records.add(record);
 
             System.out.println("Vehicle parked successfully!");
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid time format! Please use format like '8:00 AM'.");
         } catch (Exception e) {
-            System.out.println("Invalid input or time format!");
+            System.out.println("Invalid input!");
         }
     }
 
@@ -129,24 +134,25 @@ public class Parking {
                 return;
             }
 
-            System.out.print("Enter Time-out (Example: 10:00 AM): ");
+            System.out.print("Enter Time-out (Example: 10:00 PM): ");
             String timeOutStr = input.nextLine().trim();
             if (timeOutStr.isEmpty()) {
                 System.out.println("Invalid time-out!");
                 return;
             }
 
-            LocalTime timeOut = LocalTime.parse(timeOutStr.toUpperCase(), timeFormat);
+            DateTimeFormatter tFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
+            LocalTime timeOut = LocalTime.parse(timeOutStr, tFormat);
             found.timeOut = LocalDateTime.of(LocalDate.now(), timeOut);
 
             long hours = Duration.between(found.timeIn, found.timeOut).toHours();
-            if (hours == 0) hours = 1;
+            if (hours <= 0) hours = 1;
             found.hoursParked = (int) hours;
 
             double rate;
             if (found.vehicleType.equalsIgnoreCase("Motorcycle")) {
                 rate = 10;
-            } else if (found.vehicleType.equalsIgnoreCase("Car")) {
+            } else if (found.vehicleType.equalsIgnoreCase("Van")) {
                 rate = 20;
             } else {
                 rate = 20;
@@ -157,6 +163,8 @@ public class Parking {
             System.out.println("Vehicle removed successfully!");
             System.out.println("Hours Parked: " + found.hoursParked);
             System.out.println("Parking Fee: ₱" + found.fee);
+        } catch (DateTimeParseException e) {
+            System.out.println("Invalid time format! Please use format like '10:00 PM'.");
         } catch (Exception e) {
             System.out.println("Invalid input!");
         }
@@ -193,7 +201,7 @@ public class Parking {
             totalFees += record.fee;
         }
 
-        System.out.println("--------------------------------------------");
+        System.out.println("-----------------------------------------------------------");
         System.out.println("Total Vehicles: " + totalVehicles);
         System.out.println("Total Fees Collected: ₱" + totalFees);
 

@@ -15,11 +15,11 @@ public class Parking {
     public static void main(String[] args) {
         while (running) {
             System.out.println("\n--- PARKING LOT MANAGEMENT SYSTEM ---");
-            System.out.println("[A] View All Vehicles");
-            System.out.println("[B] Park a Vehicle");
-            System.out.println("[C] Remove a Vehicle");
-            System.out.println("[D] Generate Report");
-            System.out.println("[E] Exit");
+            System.out.println("a. View All Vehicles");
+            System.out.println("b. Park a Vehicle");
+            System.out.println("c. Remove a Vehicle");
+            System.out.println("d. Generate Report");
+            System.out.println("e. Exit");
             System.out.print("Enter choice: ");
             String choice = input.nextLine().toLowerCase();
 
@@ -37,7 +37,7 @@ public class Parking {
                     generateReport();
                     break;
                 case "e":
-                    System.out.println("Thank you for using the system!");
+                    System.out.println("Thank you!");
                     running = false;
                     break;
                 default:
@@ -67,7 +67,7 @@ public class Parking {
             System.out.print("\nEnter Plate Number: ");
             String plate = input.nextLine().trim();
             if (plate.isEmpty()) {
-                System.out.println("Invalid plate number! Returning to menu...");
+                System.out.println("Invalid plate number!");
                 return;
             }
 
@@ -76,21 +76,21 @@ public class Parking {
             if (!(type.equalsIgnoreCase("Car") ||
                   type.equalsIgnoreCase("Van") ||
                   type.equalsIgnoreCase("Motorcycle"))) {
-                System.out.println("Invalid vehicle type! Must be Car, Van, or Motorcycle. Returning to menu...");
+                System.out.println("Invalid vehicle type! Must be Car, Van, or Motorcycle.");
                 return;
             }
 
             System.out.print("Enter Parking Slot: ");
             String slot = input.nextLine().trim();
             if (slot.isEmpty()) {
-                System.out.println("Invalid slot! Returning to menu...");
+                System.out.println("Invalid slot!");
                 return;
             }
 
             System.out.print("Enter Time-in (Example: 8:00 AM): ");
             String timeInStr = input.nextLine().trim();
             if (timeInStr.isEmpty()) {
-                System.out.println("Invalid time-in! Returning to menu...");
+                System.out.println("Invalid time-in!");
                 return;
             }
 
@@ -107,7 +107,7 @@ public class Parking {
 
             System.out.println("Vehicle parked successfully!");
         } catch (Exception e) {
-            System.out.println("Invalid input or time format! Returning to menu...");
+            System.out.println("Invalid input or time format!");
         }
     }
 
@@ -125,14 +125,14 @@ public class Parking {
             }
 
             if (found == null) {
-                System.out.println("Vehicle not found! Returning to menu...");
+                System.out.println("Vehicle not found!");
                 return;
             }
 
             System.out.print("Enter Time-out (Example: 10:00 AM): ");
             String timeOutStr = input.nextLine().trim();
             if (timeOutStr.isEmpty()) {
-                System.out.println("Invalid time-out! Returning to menu...");
+                System.out.println("Invalid time-out!");
                 return;
             }
 
@@ -146,7 +146,7 @@ public class Parking {
             double rate;
             if (found.vehicleType.equalsIgnoreCase("Motorcycle")) {
                 rate = 10;
-            } else if (found.vehicleType.equalsIgnoreCase("Van")) {
+            } else if (found.vehicleType.equalsIgnoreCase("Car")) {
                 rate = 20;
             } else {
                 rate = 20;

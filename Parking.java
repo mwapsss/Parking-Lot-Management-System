@@ -158,7 +158,7 @@ public class Parking {
             System.out.println("Hours Parked: " + found.hoursParked);
             System.out.println("Parking Fee: ₱" + found.fee);
         } catch (Exception e) {
-            System.out.println("Invalid input! Returning to menu...");
+            System.out.println("Invalid input!");
         }
     }
 

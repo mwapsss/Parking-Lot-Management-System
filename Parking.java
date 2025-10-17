@@ -39,7 +39,7 @@ public class Parking {
                     generateReport();
                     break;
                 case "e":
-                    System.out.println("Thank you for using the system!");
+                    System.out.println("Thank you!");
                     running = false;
                     break;
                 default:

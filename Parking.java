@@ -17,7 +17,8 @@ public class Parking {
 
         // prints menu
         // loop ends when e is not picked by user
-        while (!choice.contains("e") {
+        String choice = "";
+        while (!choice.equals("e")) {
             System.out.println("\n--- PARKING LOT MANAGEMENT SYSTEM ---");
             System.out.println("a. View All Vehicles");
             System.out.println("b. Park a Vehicle");
@@ -25,7 +26,7 @@ public class Parking {
             System.out.println("d. Generate Report");
             System.out.println("e. Exit");
             System.out.print("Enter choice: ");
-            String choice = input.nextLine().toLowerCase();
+            choice = input.nextLine().toLowerCase();
 
             // validate user choice
             switch (choice) {
@@ -41,10 +42,10 @@ public class Parking {
                 case "d":
                     generateReport();
                     break;
-
-                    // if user enters an input that is not inside the choices
                 default:
-                    System.out.println("Invalid choice. Please try again.");
+                    if (!choice.equals("e")) {
+                        System.out.println("Invalid choice. Please try again.");
+                    }
             }
         }
     }
@@ -54,77 +55,68 @@ public class Parking {
 
         // check if list array is empty
         if (records.isEmpty()) {
-            System.out.println("\nNo vehicles are currently parked."); // output if list array is empty
-            return; // return to menu
+            System.out.println("\nNo vehicles are currently parked.");
+            return;
         }
 
-        int count = 1; // counting in formatting the table
+        int count = 1;
 
-        // keep looping inside the records list
+        // display all records in table format
         for (ParkingRecord record : records) {
-            String date = record.timeIn.format(dateFormat); // formatting for date
-            String time = record.timeIn.format(timeFormat); // formatting for time
-
-            // prints out table format
+            String date = record.timeIn.format(dateFormat);
+            String time = record.timeIn.format(timeFormat);
             System.out.println(count + ". " + record.plateNumber + " | " + record.vehicleType +
                     " | Slot: " + record.parkingSlot + " | Date: " + date + " | Time-in: " + time);
-            count++; // adds 1 count every new line
+            count++;
         }
     }
 
-    //method for parking vehicles
+    // method for parking vehicles
     static void parkVehicle() {
-
-        // used try catch for date and time formatting
         try {
-
             // ask user for plate number
             System.out.print("\nEnter Plate Number: ");
             String plate = input.nextLine().trim();
 
-            // if input is empty then this condition continues
             if (plate.isEmpty()) {
                 System.out.println("Invalid plate number!");
-                return; // return to menu
+                return;
             }
 
-            // prompt for vehicel type
+            // ask user for vehicle type
             System.out.print("Enter Vehicle Type (Car, Van, Motorcycle): ");
             String type = input.nextLine().trim();
 
-            // condition to only restrict car, van, and motorcycle as the only choices available
             if (!(type.equalsIgnoreCase("Car") ||
                   type.equalsIgnoreCase("Van") ||
                   type.equalsIgnoreCase("Motorcycle"))) {
                 System.out.println("Invalid vehicle type! Must be Car, Van, or Motorcycle.");
-                return; // return to menu
+                return;
             }
 
             // ask user for parking slot
             System.out.print("Enter Parking Slot: ");
             String slot = input.nextLine().trim();
 
-            // condition to check if input is empty
             if (slot.isEmpty()) {
                 System.out.println("Invalid slot!");
-                return; // return to menu
+                return;
             }
 
-            // user input for time in
+            // ask user for time-in
             System.out.print("Enter Time-in (Example: 8:00 AM): ");
             String timeInStr = input.nextLine().trim();
 
-            // check if input is empty
             if (timeInStr.isEmpty()) {
                 System.out.println("Invalid time-in!");
-                return; // return
+                return;
             }
 
             DateTimeFormatter tFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
             LocalTime timeIn = LocalTime.parse(timeInStr, tFormat);
             LocalDateTime dateTimeIn = LocalDateTime.of(LocalDate.now(), timeIn);
 
-            // loops inside list array and looks for this objects
+            // store record data
             ParkingRecord record = new ParkingRecord();
             record.plateNumber = plate;
             record.vehicleType = type;
@@ -133,10 +125,8 @@ public class Parking {
             records.add(record);
 
             System.out.println("Vehicle parked successfully!");
-
-            // error handling
         } catch (DateTimeParseException e) {
-            System.out.println("Invalid time format! Please use format like '8:00 AM'."); // output if time format is incorrect
+            System.out.println("Invalid time format! Please use format like '8:00 AM'.");
         } catch (Exception e) {
             System.out.println("Invalid input!");
         }
@@ -144,39 +134,33 @@ public class Parking {
 
     // method for removing vehicle
     static void removeVehicle() {
-
-        // used try-catch for error handling
         try {
-
-            // ask user for palte number to remove
+            // ask user for plate number
             System.out.print("\nEnter Plate Number to remove: ");
             String plate = input.nextLine().trim();
 
-            // loop that scans the list array to check for that plate number
             ParkingRecord found = null;
-            for (ParkingRecord record : records) {
 
-                // if plate number is found proceeds to remove
+            // find record in list
+            for (ParkingRecord record : records) {
                 if (record.plateNumber.equalsIgnoreCase(plate)) {
                     found = record;
                     break;
                 }
             }
 
-            // if plate number is not found then this conditon executes
             if (found == null) {
                 System.out.println("Vehicle not found!");
-                return; // return to menu
+                return;
             }
 
-            // ask user for timeout
+            // ask user for time-out
             System.out.print("Enter Time-out (Example: 10:00 PM): ");
             String timeOutStr = input.nextLine().trim();
 
-            // check if input is empty
             if (timeOutStr.isEmpty()) {
                 System.out.println("Invalid time-out!");
-                return; // return to menu
+                return;
             }
 
             DateTimeFormatter tFormat = DateTimeFormatter.ofPattern("h:mm a", Locale.ENGLISH);
@@ -187,22 +171,22 @@ public class Parking {
             if (hours <= 0) hours = 1;
             found.hoursParked = (int) hours;
 
-            // calculate the fee
-            double rate;
+            // calculate fee
+            double rate = 0;
             if (found.vehicleType.equalsIgnoreCase("Motorcycle")) {
                 rate = 10;
             } else if (found.vehicleType.equalsIgnoreCase("Van")) {
                 rate = 20;
+            } else if (found.vehicleType.equalsIgnoreCase("Car")) {
+                rate = 15;
             }
 
-            found.fee = found.hoursParked * rate; // calculate the fee based on how long its parked
+            found.fee = found.hoursParked * rate;
 
-            // system receipt when vehicle is succesfully removed from from database
+            // display result
             System.out.println("Vehicle removed successfully!");
             System.out.println("Hours Parked: " + found.hoursParked);
             System.out.println("Parking Fee: ₱" + found.fee);
-
-            // handling error for time formatting
         } catch (DateTimeParseException e) {
             System.out.println("Invalid time format! Please use format like '10:00 PM'.");
         } catch (Exception e) {
@@ -212,42 +196,38 @@ public class Parking {
 
     // method for generating report
     static void generateReport() {
-        List<ParkingRecord> completed = new ArrayList<>(); // create new array list with variable completed
+        List<ParkingRecord> completed = new ArrayList<>();
 
-        // loops inside the new array list
+        // filter completed records
         for (ParkingRecord record : records) {
-
-            // if a vehicle has a time-out saved then it adds it onto the new completed array list
             if (record.timeOut != null) {
                 completed.add(record);
             }
         }
 
-        // if no vehicle found that is outside of parking then this condition works
         if (completed.isEmpty()) {
             System.out.println("\nNo completed parking records to report.");
-            return; // return to menu
+            return;
         }
 
         double totalFees = 0;
         int totalVehicles = 0;
 
-        // parking report table
+        // print report table
         System.out.println("\n--- PARKING REPORT ---");
         System.out.printf("%-3s %-12s %-10s %-12s %-12s %-7s %-10s%n",
                 "#", "Date", "Time-in", "Plate No.", "Type", "Hours", "Fee");
 
-        int count = 1; // counting for the format table 
+        int count = 1;
 
-        // loops inside the array list
         for (ParkingRecord record : completed) {
-            String date = record.timeIn.format(dateFormat); // formatting date
-            String timeIn = record.timeIn.format(timeFormat); // formatting time
+            String date = record.timeIn.format(dateFormat);
+            String timeIn = record.timeIn.format(timeFormat);
             System.out.printf("%-3d %-12s %-10s %-12s %-12s %-7d %-10.2f%n",
                     count++, date, timeIn, record.plateNumber, record.vehicleType,
                     record.hoursParked, record.fee);
-            totalVehicles++; // adds to the current vehicles inside the parking slot
-            totalFees += record.fee; // adds the sum and inputs it into totalFees
+            totalVehicles++;
+            totalFees += record.fee;
         }
 
         System.out.println("-----------------------------------------------------------");
@@ -257,6 +237,7 @@ public class Parking {
         saveReport(completed, totalVehicles, totalFees);
     }
 
+    // method for saving report
     static void saveReport(List<ParkingRecord> completed, int totalVehicles, double totalFees) {
         try (PrintWriter writer = new PrintWriter(new FileWriter(REPORT_FILE))) {
             writer.println("--- PARKING REPORT ---");
